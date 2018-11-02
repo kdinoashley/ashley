@@ -22,7 +22,33 @@ public class HomingControllerTest {
     private HomingController controller;
 
     /*
-        This method is run before all tests.
+        Tests whether the random controller causes the robot
+        to walk into walls.
+    */
+    @Test(timeout=10000)
+    public void doesNotRunIntoWallsTest() {
+        // generate a random maze
+        Maze maze = (new PrimGenerator()).generateMaze();
+
+        // initialise the robot
+        RobotImpl robot = new RobotImpl();
+        robot.setMaze(maze);
+
+        // initialise the homing robot controller
+        HomingController controller = new HomingController();
+        controller.setRobot(robot);
+
+        // run the controller
+        controller.start();
+
+        // test whether the robot walked into walls during this run
+        assertTrue(
+                "HomingController walks into walls!",
+                robot.getCollisions() == 0);
+    }
+
+    /*
+        This method is run before other tests.
     */
     @Before
     public void setupTests() {
@@ -57,7 +83,7 @@ public class HomingControllerTest {
     public void isTargetNorthTest() {
         // move the target to some cells north of the robot and
         // test whether isTargetNorth correctly identifies this
-        for(int i=0; i<this.columns; i++) {
+        for(int i=0; i<this.rows; i++) {
             this.robot.setTargetLocation(new Point(i,0));
 
             assertTrue(
@@ -67,7 +93,7 @@ public class HomingControllerTest {
 
         // move the target to some cells south of the robot and
         // test whether isTargetNorth correctly identifies this
-        for(int i=0; i<this.columns; i++) {
+        for(int i=0; i<this.rows; i++) {
             this.robot.setTargetLocation(new Point(i,4));
 
             assertTrue(
@@ -77,12 +103,29 @@ public class HomingControllerTest {
 
         // move the target to some cells on the same y-level as the
         // robot and test whether isTargetNorth correctly identifies this
-        for(int i=0; i<this.columns; i++) {
+        for(int i=0; i<this.rows; i++) {
             this.robot.setTargetLocation(new Point(i,2));
 
             assertTrue(
                 "HomingController doesn't think the target is on the same level!",
                 this.controller.isTargetNorth() == 0);
+        }
+
+        for(int i=0; i<this.rows; i++){
+            this.robot.setTargetLocation(new Point(i,i));
+            if (this.robot.getTargetLocation().y < this.robot.getLocation().y) {
+                assertTrue(
+                        "HomingController doesn't think the target is north!",
+                        this.controller.isTargetNorth() == 1);
+            } else if (this.robot.getTargetLocation().y > this.robot.getLocation().y){
+                assertTrue(
+                        "HomingController doesn't think the target is south!",
+                        this.controller.isTargetNorth() == -1);
+            } else {
+                assertTrue(
+                        "HomingController doesn't think the target is on the same vertical level!",
+                        this.controller.isTargetNorth() == 0);
+            }
         }
     }
 
@@ -120,6 +163,23 @@ public class HomingControllerTest {
             assertTrue(
                 "HomingController doesn't think the target is on the same level!",
                 this.controller.isTargetEast() == 0);
+        }
+
+        for(int i=0; i<this.columns; i++){
+            this.robot.setTargetLocation(new Point(i,i));
+            if (this.robot.getTargetLocation().x < this.robot.getLocation().x) {
+                assertTrue(
+                        "HomingController doesn't think the target is west!",
+                        this.controller.isTargetEast() == -1);
+            } else if (this.robot.getTargetLocation().x > this.robot.getLocation().x){
+                assertTrue(
+                        "HomingController doesn't think the target is east!",
+                        this.controller.isTargetEast() == 1);
+            } else {
+                assertTrue(
+                        "HomingController doesn't think the target is on the same level!",
+                        this.controller.isTargetEast() == 0);
+            }
         }
     }
 
@@ -193,4 +253,33 @@ public class HomingControllerTest {
             "HomingController doesn't see a passage in the west!",
             this.controller.lookHeading(IRobot.WEST) == IRobot.WALL);
     }
+
+    /*
+        Test whether the homing controller's determineHeading method works correctly
+    */
+    @Test(timeout=10000)
+    public void determineHeadingTest1(){
+        // target is in south-east of robot but there is a wall in south
+        // so robot should face right to move towards east
+        this.robot.setHeading(IRobot.NORTH);
+        this.robot.setTargetLocation(new Point(4,4));
+        this.maze.setCellType(2, 3, Maze.WALL);
+        assertTrue(
+                "Homing Controller doesn't think next step is turning right",
+                this.controller.determineHeading() == IRobot.RIGHT);
+    }
+
+    @Test(timeout=10000)
+    public void determineHeadingTest2(){
+        // target is in south-east of robot but there are walls in both directions
+        // so robot should either face left to move towards west or keep facing ahead to go north
+        this.robot.setHeading(IRobot.NORTH);
+        this.robot.setTargetLocation(new Point(4,4));
+        this.maze.setCellType(2, 3, Maze.WALL);
+        this.maze.setCellType(3,2, Maze.WALL);
+        assertTrue(
+                "Homing Controller doesn't think next step is facing left or keeping facing ahead",
+                this.controller.determineHeading() == IRobot.LEFT || this.controller.determineHeading() == IRobot.AHEAD);
+    }
 }
+

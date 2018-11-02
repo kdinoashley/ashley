@@ -30,50 +30,74 @@ public class RandomController implements IRobotController {
             if ((robot.look(IRobot.AHEAD) != IRobot.WALL && i%8!=0)) {
                 robot.getLogger().log(IRobot.AHEAD);
                 robot.advance();
-                a++;//increase the number of moving ahead by one
+                //increase the number of moving ahead by one
+                a++;
+                i = a+l+r+b;;
             }
 
             // change direction if there is a wall ahead and total number of moves is a multiple of 8
-            while ((robot.look(IRobot.AHEAD) == IRobot.WALL || i%8==0) && !robot.getLocation().equals(robot.getTargetLocation())) {
-                index = (Math.random()); // generate a double number
+            while ((robot.look(IRobot.AHEAD) == IRobot.WALL || i%8==0 ) && !robot.getLocation().equals(robot.getTargetLocation())) {
+
+                // generate a double number
+                index = (Math.random());
+
                 // the situation that total number of moves is a multiple of 8 but can only go ahead
                 if(robot.look(IRobot.LEFT) == IRobot.WALL && robot.look(IRobot.RIGHT) == IRobot.WALL && robot.look(IRobot.AHEAD)!= IRobot.WALL){
-                    robot.getLogger().log(IRobot.AHEAD); //keep track of the current number of moving ahead
-                    a++; //increase the number of moving ahead by one
+                    //keep track of the current number of moving ahead
+                    robot.getLogger().log(IRobot.AHEAD);
+                    //increase the number of moving ahead by one
+                    a++;
                 }
+
                 // based on previous no-parameter stats, index is determined to make the probability of each direction relatively equal
                 // choose a direction, advance if no walls, otherwise go back to the beginning of the while loop
                 else if (index < 0.48) {
                     if(robot.look(IRobot.LEFT) != IRobot.WALL) {
-                        robot.face(IRobot.LEFT); // face left if no walls
-                        robot.getLogger().log(IRobot.LEFT); //keep track of the current number of moving left
-                        l++; //increase the number of moving left by one
+                        // face left if no walls
+                        robot.face(IRobot.LEFT);
+                        //keep track of the current number of moving left
+                        robot.getLogger().log(IRobot.LEFT);
+                        //increase the number of moving left by one
+                        l++;
                     }else{
-                        break; // exit if wall exists on the left
+                        // exit if wall exists on the left
+                        break;
                     }
                 } else if (index < 0.985) {
                     if(robot.look(IRobot.RIGHT) != IRobot.WALL) {
-                        robot.face(IRobot.RIGHT); //face right if no walls
-                        robot.getLogger().log(IRobot.RIGHT); //keep track of the current number of moving right
-                        r++; //increase the number of moving right by one
+                        //face right if no walls
+                        robot.face(IRobot.RIGHT);
+                        //keep track of the current number of moving right
+                        robot.getLogger().log(IRobot.RIGHT);
+                        //increase the number of moving right by one
+                        r++;
                     }else{
-                        break; // exit if wall exists on the right
+                        // exit if wall exists on the right
+                        break;
                     }
                 } else if (index < 1){
                     if (robot.look(IRobot.BEHIND) != IRobot.WALL) {
                         robot.face(IRobot.BEHIND);
-                        robot.getLogger().log(IRobot.BEHIND); //keep track of the current number of moving behind
-                        b++; //increase the number of moving behind by one
+                        //keep track of the current number of moving behind
+                        robot.getLogger().log(IRobot.BEHIND);
+                        //increase the number of moving behind by one
+                        b++;
                     }else{
-                        break; // exit if wall exists behind
+                        // exit if wall exists behind
+                        break;
                     }
                 }
-                robot.advance(); // advance if meet conditions above
+
+                // advance if meet conditions above
+                robot.advance();
             }
-            i = a+l+r+b; // update the total number of moves
+
+            // update the total number of moves
+            i = a+l+r+b;
         }
 
-        System.out.print(i); // check if it is coherent with robot.getLogger()
+        // check if it is coherent with robot.getLogger()
+        System.out.print(i);
 
         // wait for a while if we are supposed to
         if (delay > 0)

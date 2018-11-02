@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="HomingControllerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-10-28T12:11:04" hostname="chenshiyudeMacBook-Air.local" time="0.014">
+<testsuite name="HomingControllerTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2018-10-30T19:56:07" hostname="chenshiyudeMacBook-Air.local" time="3.01">
   <properties/>
-  <testcase name="isTargetNorthTest" classname="HomingControllerTest" time="0.01"/>
+  <testcase name="doesNotRunIntoWallsTest" classname="HomingControllerTest" time="2.999"/>
+  <testcase name="isTargetNorthTest" classname="HomingControllerTest" time="0.0"/>
   <testcase name="lookHeadingTest" classname="HomingControllerTest" time="0.001"/>
-  <testcase name="isTargetEastTest" classname="HomingControllerTest" time="0.002"/>
+  <testcase name="isTargetEastTest" classname="HomingControllerTest" time="0.001"/>
+  <testcase name="determineHeadingTest1" classname="HomingControllerTest" time="0.002"/>
+  <testcase name="determineHeadingTest2" classname="HomingControllerTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
